@@ -8,7 +8,7 @@ export default function App () {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [users, setUsers] = useState([]);
 
-  //ambil data dr API
+  //ambil data dari API
   const fetchData = async () => {
     try {
       const result = await axios.get('https://hendi-hermawan.com/pemrograman-bergerak-api.php');
