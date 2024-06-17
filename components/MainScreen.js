@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, FlatList, StyleSheet, View, Text, TouchableOpacity, Platform } from 'react-native';
+import { SafeAreaView, StyleSheet, View, Text, SectionList, Dimensions, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Appbar, FAB, List, Dialog, Portal, TextInput as PaperTextInput, Button as PaperButton, ProgressBar, Checkbox } from 'react-native-paper';
 import TaskItem from './TaskItem';
 
-const MainScreen = () => {
+const MainScreen = ({ navigation }) => {
   const [tasks, setTasks] = useState([]);
   const [currentTask, setCurrentTask] = useState(null);
   const [newTask, setNewTask] = useState('');
@@ -117,30 +117,56 @@ const MainScreen = () => {
     setVisible(false);
   };
 
+  const handleLogout = () => {
+    // Hapus data login jika diperlukan, misalnya token atau data pengguna
+    navigation.replace('Login');
+  };
+
+  const renderTask = ({ item }) => (
+    <TaskItem
+      item={item}
+      toggleTask={toggleTask}
+      startEditTask={startEditTask}
+      removeTask={removeTask}
+    />
+  );
+
+  const incompleteTasks = tasks.filter(task => !task.completed);
+  const completedTasks = tasks.filter(task => task.completed);
+
   return (
     <SafeAreaView style={styles.container}>
       <Appbar.Header>
-        <Appbar.Content title="To-Do List" />
+        <Appbar.Content title="Listosaurus" />
+        <Appbar.Action icon="logout" onPress={handleLogout} />
       </Appbar.Header>
-      <ProgressBar progress={progress} style={styles.progressBar} />
+      <ProgressBar progress={progress} style={styles.progressBar} color="#3F60D3" />
       <Text style={styles.progressText}>{Math.round(progress * 100)}%</Text>
-      <FlatList
-        data={tasks}
-        renderItem={({ item }) => (
-          <TaskItem
-            item={item}
-            toggleTask={toggleTask}
-            startEditTask={startEditTask}
-            removeTask={removeTask}
-          />
+      
+      <SectionList
+        sections={[
+          { title: 'Incomplete Tasks', data: incompleteTasks },
+          { title: 'Completed Tasks', data: completedTasks }
+        ]}
+        renderItem={renderTask}
+        renderSectionHeader={({ section }) => (
+          <View>
+            <Text style={styles.sectionTitle}>{section.title}</Text>
+            {section.title === 'Incomplete Tasks' && section.data.length === 0 && (
+              <Text style={styles.emptyMessage}>You've completed all your tasks, good job.</Text>
+            )}
+          </View>
         )}
         keyExtractor={item => item.key}
+        stickySectionHeadersEnabled={true}
       />
+
       <FAB
         style={styles.fab}
         small
         icon="plus"
         onPress={() => setVisible(true)}
+        color="#FFF"
       />
       <Portal>
         <Dialog visible={visible} onDismiss={resetTaskForm}>
@@ -195,16 +221,22 @@ const MainScreen = () => {
   );
 };
 
+const { height } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  tasksContainer: {
+    flex: 1,
   },
   fab: {
     position: 'absolute',
     margin: 16,
     right: 0,
     bottom: 0,
+    backgroundColor: '#3F60D3',
   },
   progressBar: {
     height: 10,
@@ -214,6 +246,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 8,
     fontSize: 18,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 16,
+    marginTop: 16,
+  },
+  emptyMessage: {
+    fontSize: 16,
+    color: '#888',
+    marginLeft: 16,
+    marginTop: 8,
+    opacity: 0.7,
   },
   completedTask: {
     textDecorationLine: 'line-through',

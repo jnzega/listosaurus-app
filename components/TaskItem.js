@@ -10,6 +10,7 @@ const TaskItem = ({ item, toggleTask, startEditTask, removeTask }) => (
       <Checkbox
         status={item.completed ? 'checked' : 'unchecked'}
         onPress={() => toggleTask(item.key)}
+        color="#3F60D3"
       />
     )}
     right={props => (

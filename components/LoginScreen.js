@@ -23,6 +23,14 @@ const LoginScreen = ({ navigation }) => {
           value={username}
           onChangeText={setUsername}
           style={styles.input}
+          theme={{
+            colors: {
+              placeholder: '#3F60D3', // Warna placeholder
+              text: '#000000', // Warna teks
+              primary: '#3F60D3', // Warna underline saat aktif
+              underlineColor: 'transparent', // Menghapus underline default
+            },
+          }}
         />
         <PaperTextInput
           label="Password"
@@ -30,6 +38,14 @@ const LoginScreen = ({ navigation }) => {
           onChangeText={setPassword}
           secureTextEntry
           style={styles.input}
+          theme={{
+            colors: {
+              placeholder: '#3F60D3', // Warna placeholder
+              text: '#000000', // Warna teks
+              primary: '#3F60D3', // Warna underline saat aktif
+              underlineColor: 'transparent', // Menghapus underline default
+            },
+          }}
         />
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
         <PaperButton mode="contained" onPress={handleLogin} style={styles.button}>
@@ -51,10 +67,12 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   input: {
+    backgroundColor: '#fff',
     marginBottom: 16,
   },
   button: {
     marginTop: 16,
+    backgroundColor: '#3F60D3'
   },
   errorText: {
     color: 'red',
