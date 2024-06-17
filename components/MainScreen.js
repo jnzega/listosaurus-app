@@ -118,7 +118,6 @@ const MainScreen = ({ navigation }) => {
   };
 
   const handleLogout = () => {
-    // Hapus data login jika diperlukan, misalnya token atau data pengguna
     navigation.replace('Login');
   };
 

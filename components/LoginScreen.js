@@ -25,10 +25,10 @@ const LoginScreen = ({ navigation }) => {
           style={styles.input}
           theme={{
             colors: {
-              placeholder: '#3F60D3', // Warna placeholder
-              text: '#000000', // Warna teks
-              primary: '#3F60D3', // Warna underline saat aktif
-              underlineColor: 'transparent', // Menghapus underline default
+              placeholder: '#3F60D3', 
+              text: '#000000', 
+              primary: '#3F60D3', 
+              underlineColor: 'transparent', 
             },
           }}
         />
@@ -40,10 +40,10 @@ const LoginScreen = ({ navigation }) => {
           style={styles.input}
           theme={{
             colors: {
-              placeholder: '#3F60D3', // Warna placeholder
-              text: '#000000', // Warna teks
-              primary: '#3F60D3', // Warna underline saat aktif
-              underlineColor: 'transparent', // Menghapus underline default
+              placeholder: '#3F60D3', 
+              text: '#000000', 
+              primary: '#3F60D3', 
+              underlineColor: 'transparent', 
             },
           }}
         />
