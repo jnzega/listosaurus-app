@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, StyleSheet, View, Text, SectionList, Dimensions, TouchableOpacity } from 'react-native';
+import { SafeAreaView, FlatList, StyleSheet, View, Text, SectionList, Dimensions, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Appbar, FAB, List, Dialog, Portal, TextInput as PaperTextInput, Button as PaperButton, ProgressBar, Checkbox } from 'react-native-paper';
@@ -14,8 +14,10 @@ const MainScreen = ({ navigation }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
+    checkAdmin();
     loadTasks();
   }, []);
 
@@ -23,9 +25,17 @@ const MainScreen = ({ navigation }) => {
     calculateProgress();
   }, [tasks]);
 
+  const checkAdmin = async () => {
+    const user = await AsyncStorage.getItem('loggedInUser');
+    const { role } = JSON.parse(user);
+    setIsAdmin(role === 'admin');
+  };
+
   const loadTasks = async () => {
     try {
-      const storedTasks = await AsyncStorage.getItem('tasks');
+      const user = await AsyncStorage.getItem('loggedInUser');
+      const { username } = JSON.parse(user);
+      const storedTasks = await AsyncStorage.getItem(`tasks_${username}`);
       if (storedTasks) {
         setTasks(JSON.parse(storedTasks));
       }
@@ -36,7 +46,9 @@ const MainScreen = ({ navigation }) => {
 
   const saveTasks = async (tasks) => {
     try {
-      await AsyncStorage.setItem('tasks', JSON.stringify(tasks));
+      const user = await AsyncStorage.getItem('loggedInUser');
+      const { username } = JSON.parse(user);
+      await AsyncStorage.setItem(`tasks_${username}`, JSON.stringify(tasks));
     } catch (error) {
       console.error(error);
     }
@@ -117,7 +129,8 @@ const MainScreen = ({ navigation }) => {
     setVisible(false);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem('loggedInUser');
     navigation.replace('Login');
   };
 
@@ -138,6 +151,9 @@ const MainScreen = ({ navigation }) => {
       <Appbar.Header>
         <Appbar.Content title="Listosaurus" />
         <Appbar.Action icon="logout" onPress={handleLogout} />
+        {isAdmin && (
+          <Appbar.Action icon="account" onPress={() => navigation.navigate('UserList')} />
+        )}
       </Appbar.Header>
       <ProgressBar progress={progress} style={styles.progressBar} color="#3F60D3" />
       <Text style={styles.progressText}>{Math.round(progress * 100)}%</Text>
@@ -165,7 +181,7 @@ const MainScreen = ({ navigation }) => {
         small
         icon="plus"
         onPress={() => setVisible(true)}
-        color="#FFF"
+        color="#fff"
       />
       <Portal>
         <Dialog visible={visible} onDismiss={resetTaskForm}>

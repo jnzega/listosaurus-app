@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './components/LoginScreen';
 import MainScreen from './components/MainScreen';
+import UserList from './components/UserList';
 import 'react-native-gesture-handler';
 
 const Stack = createStackNavigator();
@@ -15,6 +16,7 @@ const App = () => {
         <Stack.Navigator initialRouteName="Login">
           <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="UserList" component={UserList} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>
