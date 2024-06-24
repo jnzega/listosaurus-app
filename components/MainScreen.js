@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, FlatList, StyleSheet, View, Text, SectionList, Dimensions, TouchableOpacity } from 'react-native';
+import { SafeAreaView, SectionList, StyleSheet, View, Text, TouchableOpacity, Dimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Appbar, FAB, List, Dialog, Portal, TextInput as PaperTextInput, Button as PaperButton, ProgressBar, Checkbox } from 'react-native-paper';
+import { Appbar, FAB, Dialog, Portal, TextInput as PaperTextInput, Button as PaperButton, ProgressBar } from 'react-native-paper';
 import TaskItem from './TaskItem';
 
 const MainScreen = ({ navigation }) => {
@@ -105,13 +105,13 @@ const MainScreen = ({ navigation }) => {
 
   const onDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || deadline;
-    setShowDatePicker(Platform.OS === 'ios');
+    setShowDatePicker(false); // Hide the DatePicker after selection
     setDeadline(currentDate);
   };
 
   const onTimeChange = (event, selectedTime) => {
     const currentTime = selectedTime || deadline;
-    setShowTimePicker(Platform.OS === 'ios');
+    setShowTimePicker(false); // Hide the TimePicker after selection
     setDeadline(currentTime);
   };
 
@@ -157,7 +157,7 @@ const MainScreen = ({ navigation }) => {
       </Appbar.Header>
       <ProgressBar progress={progress} style={styles.progressBar} color="#3F60D3" />
       <Text style={styles.progressText}>{Math.round(progress * 100)}%</Text>
-      
+
       <SectionList
         sections={[
           { title: 'Incomplete Tasks', data: incompleteTasks },
@@ -181,7 +181,7 @@ const MainScreen = ({ navigation }) => {
         small
         icon="plus"
         onPress={() => setVisible(true)}
-        color="#fff"
+        color="#3F60D3"
       />
       <Portal>
         <Dialog visible={visible} onDismiss={resetTaskForm}>
