@@ -40,8 +40,8 @@ Aplikasi Todo List sederhana yang dibangun dengan React Native. Aplikasi ini mem
 1. Clone repositori:
 
     ```sh
-    git clone https://github.com/your-username/todo-list-app.git
-    cd todo-list-app
+    git clone https://github.com/jnzega/listosaurus-app.git
+    cd listosaurus-app
     ```
 
 2. Instal dependensi:
