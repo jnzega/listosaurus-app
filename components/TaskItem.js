@@ -4,10 +4,12 @@ import { List, Checkbox } from 'react-native-paper';
 
 const TaskItem = ({ item, toggleTask, startEditTask, removeTask }) => (
   <List.Item
+    style={styles.checkBoxs}
     title={`${item.text} (Due: ${new Date(item.deadline).toLocaleString()})`}
     titleStyle={item.completed ? styles.completedTask : null}
     left={props => (
       <Checkbox
+        style={styles.checkBoxes}
         status={item.completed ? 'checked' : 'unchecked'}
         onPress={() => toggleTask(item.key)}
         color="#3F60D3"
@@ -18,7 +20,7 @@ const TaskItem = ({ item, toggleTask, startEditTask, removeTask }) => (
         <TouchableOpacity onPress={() => startEditTask(item)}>
           <List.Icon {...props} icon="pencil" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => removeTask(item.key)}>
+        <TouchableOpacity onPress={() => removeTask(item)}>
           <List.Icon {...props} icon="delete" />
         </TouchableOpacity>
       </View>
@@ -33,6 +35,9 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  checkBoxs: {
+    marginLeft: 15,
   },
 });
 
