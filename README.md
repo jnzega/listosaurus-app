@@ -107,7 +107,3 @@ Memungkinkan admin untuk melihat dan menghapus pengguna dan tugas terkait mereka
 ## Kontribusi
 
 Kontribusi sangat diterima! Silakan buat pull request atau buka issue untuk mendiskusikan perubahan atau peningkatan apa pun.
-
-## Lisensi
-
-Proyek ini dilisensikan di bawah Lisensi MIT. Lihat file LICENSE untuk detail lebih lanjut.
