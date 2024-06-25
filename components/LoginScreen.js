@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { SafeAreaView, StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 import { TextInput as PaperTextInput, Button as PaperButton } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -14,12 +14,13 @@ const LoginScreen = ({ navigation }) => {
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
   const handleLogin = async () => {
+    const trimmedUsername = username.trimEnd();
     const storedUsers = await AsyncStorage.getItem('users');
     const users = storedUsers ? JSON.parse(storedUsers) : {};
 
-    if (users[username] && users[username] === password) {
-      const role = (username === 'admin' && password === '123') ? 'admin' : 'user';
-      await AsyncStorage.setItem('loggedInUser', JSON.stringify({ username, role }));
+    if (users[trimmedUsername] && users[trimmedUsername] === password) {
+      const role = (trimmedUsername === 'admin' && password === '123') ? 'admin' : 'user';
+      await AsyncStorage.setItem('loggedInUser', JSON.stringify({ username: trimmedUsername, role }));
       navigation.replace('Main');
     } else {
       setError('Invalid username or password');
@@ -27,6 +28,11 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const handleRegister = async () => {
+    if (/\s/.test(username)) {
+      setError('Username must not contain spaces. Use ".", "_" or "-" instead.');
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -48,6 +54,7 @@ const LoginScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.loginContainer}>
+        <Image source={require('../assets/icon.png')} style={styles.logo} />
         <PaperTextInput
           label="Username"
           value={username}
@@ -55,10 +62,10 @@ const LoginScreen = ({ navigation }) => {
           style={styles.input}
           theme={{
             colors: {
-              placeholder: '#3F60D3', // Warna placeholder
-              text: '#000000', // Warna teks
-              primary: '#3F60D3', // Warna underline saat aktif
-              underlineColor: 'transparent', // Menghapus underline default
+              placeholder: '#3F60D3', 
+              text: '#000000',
+              primary: '#3F60D3',
+              underlineColor: 'transparent',
             },
           }}
         />
@@ -71,10 +78,10 @@ const LoginScreen = ({ navigation }) => {
             style={styles.passwordInput}
             theme={{
               colors: {
-                placeholder: '#3F60D3', // Warna placeholder
-                text: '#000000', // Warna teks
-                primary: '#3F60D3', // Warna underline saat aktif
-                underlineColor: 'transparent', // Menghapus underline default
+                placeholder: '#3F60D3',
+                text: '#000000',
+                primary: '#3F60D3',
+                underlineColor: 'transparent',
               },
             }}
           />
@@ -92,10 +99,10 @@ const LoginScreen = ({ navigation }) => {
               style={styles.passwordInput}
               theme={{
                 colors: {
-                  placeholder: '#3F60D3', // Warna placeholder
-                  text: '#000000', // Warna teks
-                  primary: '#3F60D3', // Warna underline saat aktif
-                  underlineColor: 'transparent', // Menghapus underline default
+                  placeholder: '#3F60D3',
+                  text: '#000000', 
+                  primary: '#3F60D3', 
+                  underlineColor: 'transparent',
                 },
               }}
             />
@@ -106,12 +113,12 @@ const LoginScreen = ({ navigation }) => {
         )}
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
         <PaperButton mode="contained" onPress={isRegistering ? handleRegister : handleLogin} style={styles.button}>
-          {isRegistering ? 'Register' : 'Login'}
+          {isRegistering ? 'Sign Up' : 'Sign In'}
         </PaperButton>
         <TouchableOpacity onPress={() => setIsRegistering(!isRegistering)}>
           <Text style={styles.switchText}>
             {isRegistering ? 'Already have an account? ' : 'Don\'t have an account? '}
-            <Text style={styles.switchLink}>{isRegistering ? 'Login' : 'Register'}</Text>
+            <Text style={styles.switchLink}>{isRegistering ? 'Sign In' : 'Sign Up'}</Text>
           </Text>
         </TouchableOpacity>
       </View>
@@ -157,6 +164,12 @@ const styles = StyleSheet.create({
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 16,
+  },
+  logo: {
+    width: 100,  // Atur lebar gambar sesuai kebutuhan
+    height: 100,  // Atur tinggi gambar sesuai kebutuhan
+    alignSelf: 'center',
     marginBottom: 16,
   },
 });

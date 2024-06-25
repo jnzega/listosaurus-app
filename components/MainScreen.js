@@ -214,7 +214,7 @@ const MainScreen = ({ navigation }) => {
       <View style={styles.barContainer}>
         <Text style={styles.dateText}>{currentDate}</Text>
         <Text style={styles.titleText}>Your today's progress</Text>
-        <Text style={styles.tasksCompletedText}>{`${remainingTasks}/${totalTasks} Tasks completed`}</Text>
+        <Text style={styles.tasksCompletedText}>{`${totalTasks - remainingTasks}/${totalTasks} Tasks completed`}</Text>
         <Text style={styles.progressText}>{Math.round(progress * 100)}%</Text>
         <ProgressBar progress={progress} style={styles.progressBar} color="#FFFFFF" />
       </View>
