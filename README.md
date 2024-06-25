@@ -1,22 +1,21 @@
-# Aplikasi Todo List
+# Listosaurus
 
-Aplikasi Todo List sederhana yang dibangun dengan React Native. Aplikasi ini memungkinkan pengguna untuk mendaftar, login, mengelola tugas mereka, dan menyediakan antarmuka admin untuk mengelola pengguna.
+Listosaurus adalah aplikasi todo list sederhana yang dibangun dengan React Native. Aplikasi ini memungkinkan pengguna untuk mendaftar, login, mengelola tugas mereka berdasarkan akun.
 
 ## Fitur
 
 - **Pendaftaran dan Login Pengguna**: Pengguna dapat mendaftar dan login ke aplikasi.
-- **Akses Admin**: Admin dapat melihat semua pengguna yang terdaftar, aktivitas mereka, dan mengelola akun pengguna.
 - **Manajemen Tugas**: Pengguna dapat menambahkan, mengedit, menghapus, dan menandai tugas sebagai selesai.
 - **Tampilan Tugas Terpisah**: Tugas dipisahkan menjadi bagian tugas yang belum selesai dan yang sudah selesai.
 - **Tombol Visibilitas Kata Sandi**: Pengguna dapat mengganti visibilitas kata sandi mereka.
 
 ## Layar
+- UNDER DEVELOPMENT
 
 ### LoginScreen
 
 - Pengguna dapat login dengan username dan kata sandi mereka.
 - Jika pengguna belum terdaftar, mereka dapat beralih ke tampilan pendaftaran.
-- Kredensial login admin: `username: admin, password: 123`.
 
 ### RegisterScreen (dalam LoginScreen)
 
@@ -78,10 +77,8 @@ Aplikasi Todo List sederhana yang dibangun dengan React Native. Aplikasi ini mem
 
 ## Penggunaan
 
-1. **Login sebagai Admin**: Gunakan `username: admin` dan `password: 123` untuk login sebagai admin.
-2. **Mendaftar Pengguna**: Beralih ke tampilan pendaftaran dan daftar pengguna baru.
-3. **Mengelola Tugas**: Setelah login, Anda dapat menambahkan, mengedit, menghapus, dan menandai tugas sebagai selesai.
-4. **Tindakan Admin**: Sebagai admin, Anda dapat menavigasi ke layar manajemen pengguna untuk melihat dan menghapus pengguna.
+1. **Mendaftar Pengguna**: Beralih ke tampilan pendaftaran dan daftar pengguna baru.
+2. **Mengelola Tugas**: Setelah login, Anda dapat menambahkan, mengedit, menghapus, dan menandai tugas sebagai selesai.
 
 ## Dependensi
 
@@ -92,6 +89,8 @@ Aplikasi Todo List sederhana yang dibangun dengan React Native. Aplikasi ini mem
 
 ## Ikhtisar Kode
 
+- UNDER DEVELOPMENT
+
 ### LoginScreen.js
 
 Menangani login dan pendaftaran pengguna, termasuk tombol visibilitas kata sandi dan konfirmasi kata sandi.
@@ -99,10 +98,6 @@ Menangani login dan pendaftaran pengguna, termasuk tombol visibilitas kata sandi
 ### MainScreen.js
 
 Menampilkan tugas, menangani manajemen tugas, dan menyertakan navigasi admin.
-
-### UserList.js
-
-Memungkinkan admin untuk melihat dan menghapus pengguna dan tugas terkait mereka.
 
 ## Kontribusi
 
