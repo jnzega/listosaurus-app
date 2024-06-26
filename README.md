@@ -1,104 +1,111 @@
 # Listosaurus
 
-Listosaurus adalah aplikasi todo list sederhana yang dibangun dengan React Native. Aplikasi ini memungkinkan pengguna untuk mendaftar, login, mengelola tugas mereka berdasarkan akun.
+Listosaurus adalah aplikasi manajemen tugas yang memungkinkan pengguna untuk menambah, mengedit, menghapus, dan menandai tugas sebagai selesai. Aplikasi ini juga dilengkapi dengan fitur notifikasi yang akan mengingatkan pengguna jika tenggat waktu tugas mendekati 30 menit. Aplikasi ini dirancang untuk menjadi aplikasi open-source yang memungkinkan kontribusi dari komunitas.
 
 ## Fitur
 
-- **Pendaftaran dan Login Pengguna**: Pengguna dapat mendaftar dan login ke aplikasi.
-- **Manajemen Tugas**: Pengguna dapat menambahkan, mengedit, menghapus, dan menandai tugas sebagai selesai.
-- **Tampilan Tugas Terpisah**: Tugas dipisahkan menjadi bagian tugas yang belum selesai dan yang sudah selesai.
-- **Tombol Visibilitas Kata Sandi**: Pengguna dapat mengganti visibilitas kata sandi mereka.
+- **Autentikasi Pengguna**: Login dan register pengguna dengan validasi untuk memastikan keamanan.
+- **Manajemen Tugas**: Tambah, edit, hapus, dan tandai tugas sebagai selesai.
+- **Notifikasi**: Mengirim notifikasi ketika tenggat waktu tugas mendekati 30 menit.
+- **Daftar Pengguna**: Admin dapat melihat dan mengelola daftar pengguna.
+- **Progress Bar**: Menampilkan persentase tugas yang telah diselesaikan.
+- **Penanganan Tenggat Waktu**: Menyimpan dan menampilkan tenggat waktu tugas.
 
-## Layar
-- UNDER DEVELOPMENT
+## Library yang Digunakan
 
-### LoginScreen
+- [React Native](https://reactnative.dev/): Framework untuk membangun aplikasi mobile menggunakan JavaScript dan React.
+- [React Native Paper](https://callstack.github.io/react-native-paper/): Komponen Material Design untuk React Native.
+- [AsyncStorage](https://github.com/react-native-async-storage/async-storage): Untuk menyimpan data secara lokal pada perangkat pengguna.
+- [React Navigation](https://reactnavigation.org/): Untuk navigasi dalam aplikasi React Native.
+- [Expo](https://expo.dev/): Platform untuk pengembangan React Native yang mempercepat proses pengembangan.
+- [Expo Notifications](https://docs.expo.dev/versions/latest/sdk/notifications/): Untuk menangani notifikasi push di aplikasi Expo.
+- [React Native Vector Icons](https://github.com/oblador/react-native-vector-icons): Koleksi ikon populer untuk React Native.
 
-- Pengguna dapat login dengan username dan kata sandi mereka.
-- Jika pengguna belum terdaftar, mereka dapat beralih ke tampilan pendaftaran.
+## Petunjuk Penggunaan Aplikasi
 
-### RegisterScreen (dalam LoginScreen)
+### Instalasi
 
-- Pengguna dapat mendaftar dengan username dan kata sandi.
-- Konfirmasi kata sandi diperlukan untuk memastikan pengguna memasukkan kata sandi yang benar.
-
-### MainScreen
-
-- Menampilkan tugas pengguna, dipisahkan menjadi bagian tugas yang belum selesai dan yang sudah selesai.
-- Memungkinkan pengguna untuk menambahkan, mengedit, menghapus, dan menandai tugas sebagai selesai.
-- Menampilkan progres tugas yang sudah selesai.
-- Admin memiliki akses ke layar manajemen pengguna.
-
-### UserList (Hanya Admin)
-
-- Admin dapat melihat semua pengguna yang terdaftar dan kata sandi mereka.
-- Admin dapat menghapus akun pengguna, yang juga menghapus tugas terkait.
-
-## Instalasi
-
-1. Clone repositori:
-
-    ```sh
-    git clone https://github.com/jnzega/listosaurus-app.git
-    cd listosaurus-app
+1. **Clone Repository**: Clone repository dari GitHub.
+    ```bash
+    git clone https://github.com/username/listosaurus-app.git
     ```
-
-2. Instal dependensi:
-
-    ```sh
+2. **Install Dependencies**: Jalankan perintah berikut untuk menginstall semua dependensi yang dibutuhkan.
+    ```bash
+    cd listosaurus-app
     npm install
     ```
-
-    atau jika Anda menggunakan yarn:
-
-    ```sh
-    yarn install
+3. **Jalankan Aplikasi**: Gunakan Expo CLI untuk menjalankan aplikasi.
+    ```bash
+    npx expo start
     ```
 
-3. Link `react-native-vector-icons` (untuk versi React Native di bawah 0.60):
+### Penggunaan
 
-    ```sh
-    react-native link react-native-vector-icons
-    ```
+1. **Login dan Register**: Pengguna dapat membuat akun baru atau login dengan akun yang sudah ada. Admin dapat login dengan username `admin` dan password `123`.
+2. **Manajemen Tugas**: Tambah, edit, dan hapus tugas melalui antarmuka yang disediakan. Tandai tugas sebagai selesai dengan menekan kotak centang di sebelah tugas.
+3. **Notifikasi**: Aplikasi akan mengirim notifikasi ketika tenggat waktu tugas mendekati 30 menit.
+4. **Daftar Pengguna (Admin)**: Admin dapat melihat daftar semua pengguna yang terdaftar dan menghapus pengguna jika diperlukan.
+5. **Progress Bar**: Menampilkan persentase tugas yang telah diselesaikan oleh pengguna.
 
-4. Jalankan aplikasi:
+## Algoritma Penting
 
-    Untuk iOS:
+### 1. Autentikasi Pengguna
 
-    ```sh
-    npx react-native run-ios
-    ```
+- **Login**: Memeriksa username dan password yang dimasukkan pengguna dengan data yang tersimpan di AsyncStorage.
+- **Register**: Memvalidasi dan menyimpan username dan password baru ke AsyncStorage.
 
-    Untuk Android:
+### 2. Manajemen Tugas
 
-    ```sh
-    npx react-native run-android
-    ```
+- **Tambah Tugas**: Menambahkan tugas baru dengan teks dan tenggat waktu.
+- **Edit Tugas**: Memperbarui teks dan tenggat waktu tugas yang sudah ada.
+- **Hapus Tugas**: Menghapus tugas dari daftar.
+- **Tandai Tugas Selesai**: Mengubah status tugas menjadi selesai atau belum selesai.
 
-## Penggunaan
+### 3. Notifikasi
 
-1. **Mendaftar Pengguna**: Beralih ke tampilan pendaftaran dan daftar pengguna baru.
-2. **Mengelola Tugas**: Setelah login, Anda dapat menambahkan, mengedit, menghapus, dan menandai tugas sebagai selesai.
+- **Penjadwalan Notifikasi**: Menghitung selisih waktu antara waktu saat ini dan tenggat waktu tugas, dan menjadwalkan notifikasi jika selisih waktu kurang dari atau sama dengan 30 menit.
 
-## Dependensi
+### 4. Progress Bar
 
-- **react-native**: Framework inti untuk membangun aplikasi mobile.
-- **react-native-paper**: Library komponen UI untuk React Native.
-- **react-native-vector-icons**: Library untuk menyertakan ikon vektor dalam aplikasi.
-- **@react-native-async-storage/async-storage**: Library untuk penyimpanan lokal asinkron.
+- **Menghitung Progres**: Menghitung persentase tugas yang telah diselesaikan dari total tugas yang ada.
 
-## Ikhtisar Kode
+### 5. Pengelolaan Daftar Pengguna (Admin)
 
-- UNDER DEVELOPMENT
-
-### LoginScreen.js
-
-Menangani login dan pendaftaran pengguna, termasuk tombol visibilitas kata sandi dan konfirmasi kata sandi.
-
-### MainScreen.js
-
-Menampilkan tugas, menangani manajemen tugas, dan menyertakan navigasi admin.
+- **Melihat Daftar Pengguna**: Admin dapat melihat daftar semua pengguna yang terdaftar.
+- **Menghapus Pengguna**: Admin dapat menghapus pengguna dari daftar, termasuk menghapus semua data tugas pengguna tersebut.
 
 ## Kontribusi
 
-Kontribusi sangat diterima! Silakan buat pull request atau buka issue untuk mendiskusikan perubahan atau peningkatan apa pun.
+Kami sangat menghargai kontribusi dari komunitas open source. Jika Anda ingin berkontribusi, berikut adalah langkah-langkah yang dapat Anda ikuti:
+
+1. **Fork Repository**: Fork repository ini ke akun GitHub Anda.
+2. **Clone Repository**: Clone repository hasil fork ke komputer Anda.
+    ```bash
+    git clone https://github.com/username/listosaurus-app.git
+    ```
+3. **Buat Branch Baru**: Buat branch baru untuk fitur atau perbaikan yang ingin Anda lakukan.
+    ```bash
+    git checkout -b nama-branch-anda
+    ```
+4. **Lakukan Perubahan**: Lakukan perubahan yang diperlukan di kode sumber.
+5. **Commit Perubahan**: Commit perubahan Anda dengan pesan yang jelas.
+    ```bash
+    git commit -m "Menambahkan fitur X"
+    ```
+6. **Push ke Repository Anda**: Push perubahan ke repository GitHub Anda.
+    ```bash
+    git push origin nama-branch-anda
+    ```
+7. **Buat Pull Request**: Buat pull request dari repository Anda ke branch utama repository ini.
+
+### Panduan Kontribusi
+
+- **Fork & Clone**: Mulailah dengan fork dan clone repository ini.
+- **Buat Branch**: Buat branch baru untuk setiap fitur atau perbaikan.
+- **Deskripsi Jelas**: Pastikan commit dan pull request memiliki deskripsi yang jelas tentang apa yang diubah atau ditambahkan.
+- **Ikuti Standar Kode**: Pastikan kode Anda mengikuti standar yang digunakan dalam proyek ini.
+- **Pengujian**: Uji perubahan Anda sebelum mengirim pull request.
+
+## Lisensi
+
+Aplikasi ini dilisensikan di bawah [MIT License](LICENSE).

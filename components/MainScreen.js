@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Appbar, FAB, Dialog, Portal, TextInput as PaperTextInput, Button as PaperButton, ProgressBar } from 'react-native-paper';
 import TaskItem from './TaskItem';
+import * as Notifications from 'expo-notifications';
 
 const MainScreen = ({ navigation }) => {
   const [tasks, setTasks] = useState([]);
@@ -24,6 +25,7 @@ const MainScreen = ({ navigation }) => {
     checkAdmin();
     loadTasks();
     loadUserName();
+    registerForPushNotificationsAsync();
   }, []);
 
   useEffect(() => {
@@ -157,14 +159,49 @@ const MainScreen = ({ navigation }) => {
     navigation.replace('Login');
   };
 
-  const renderTask = ({ item }) => (
-    <TaskItem
-      item={item}
-      toggleTask={toggleTask}
-      startEditTask={startEditTask}
-      removeTask={confirmRemoveTask}
-    />
-  );
+  const scheduleNotification = async (task) => {
+    const timeDiff = new Date(task.deadline).getTime() - new Date().getTime();
+    if (timeDiff > 0 && timeDiff <= 30 * 60 * 1000) {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Task Deadline Approaching",
+          body: `Your task "${task.text}" is due soon!`,
+        },
+        trigger: { seconds: Math.floor(timeDiff / 1000) },
+      });
+    }
+  };
+
+  const registerForPushNotificationsAsync = async () => {
+    const { status } = await Notifications.requestPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    const token = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log(token);
+  };
+
+  const renderTask = ({ item, index, section }) => {
+    const isLast = index === section.data.length - 1;
+    return (
+      <TaskItem
+        item={item}
+        toggleTask={toggleTask}
+        startEditTask={startEditTask}
+        removeTask={confirmRemoveTask}
+        isLast={isLast}
+      />
+    );
+  };
+
+  useEffect(() => {
+    tasks.forEach(task => {
+      if (!task.completed) {
+        scheduleNotification(task);
+      }
+    });
+  }, [tasks]);
 
   const incompleteTasks = tasks.filter(task => !task.completed);
   const completedTasks = tasks.filter(task => task.completed);
@@ -179,13 +216,13 @@ const MainScreen = ({ navigation }) => {
 
   const onDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || deadline;
-    setShowDatePicker(false); // Hide the DatePicker after selection
+    setShowDatePicker(false);
     setDeadline(currentDate);
   };
 
   const onTimeChange = (event, selectedTime) => {
     const currentTime = selectedTime || deadline;
-    setShowTimePicker(false); // Hide the TimePicker after selection
+    setShowTimePicker(false);
     setDeadline(currentTime);
   };
 
@@ -206,9 +243,15 @@ const MainScreen = ({ navigation }) => {
           </Text>
           <Text style={styles.appbarText}>{getGreeting()}</Text>
         </View>
-        <Appbar.Action icon="logout" onPress={handleLogout} />
+        <Appbar.Action
+          icon="logout"
+          onPress={handleLogout}
+        />
         {isAdmin && (
-          <Appbar.Action icon="account" onPress={() => navigation.navigate('UserList')} />
+          <Appbar.Action
+            icon="account"
+            onPress={() => navigation.navigate('UserList')}
+          />
         )}
       </Appbar.Header>
       <View style={styles.barContainer}>
@@ -216,7 +259,11 @@ const MainScreen = ({ navigation }) => {
         <Text style={styles.titleText}>Your today's progress</Text>
         <Text style={styles.tasksCompletedText}>{`${totalTasks - remainingTasks}/${totalTasks} Tasks completed`}</Text>
         <Text style={styles.progressText}>{Math.round(progress * 100)}%</Text>
-        <ProgressBar progress={progress} style={styles.progressBar} color="#FFFFFF" />
+        <ProgressBar
+          progress={progress}
+          style={styles.progressBar}
+          color="#FFFFFF"
+        />
       </View>
       <SectionList
         sections={[
@@ -226,9 +273,27 @@ const MainScreen = ({ navigation }) => {
         renderItem={renderTask}
         renderSectionHeader={({ section }) => (
           <View>
-            <Text style={styles.sectionTitle}>{section.title}</Text>
+            {section.title === 'Undone' && (
+              <Text style={styles.sectionTitle}>
+              {section.title}
+              {` (${remainingTasks})`}
+            </Text>
+            )}
+            {section.title === 'Completed' && (
+              <Text style={styles.sectionTitle}>
+              {section.title}
+              {` (${totalTasks - remainingTasks})`}
+            </Text>
+            )}
             {section.title === 'Undone' && section.data.length === 0 && (
-              <Text style={styles.emptyMessage}>You've completed all your tasks, good job.</Text>
+              <Text style={styles.emptyMessage}>
+                Your task is empty
+              </Text>
+            )}
+            {section.title === 'Completed' && section.data.length === 0 && (
+              <Text style={styles.emptyMessage}>
+                You haven't complete any task yet
+              </Text>
             )}
           </View>
         )}
@@ -244,19 +309,34 @@ const MainScreen = ({ navigation }) => {
         color="#FFFFFF"
       />
       <Portal>
-        <Dialog visible={visible} onDismiss={resetTaskForm}>
-          <Dialog.Title>{currentTask ? "Edit Task" : "Add Task"}</Dialog.Title>
-          <Dialog.Content>
+        <Dialog
+          visible={visible}
+          onDismiss={resetTaskForm}
+          style={styles.dialog}>
+          <Dialog.Title style={styles.dialogTitle}>
+            {currentTask ? "Edit Task" : "Add Task"}
+          </Dialog.Title>
+          <Dialog.Content style={styles.dialogContent}>
             <PaperTextInput
               label="Task Name"
               value={newTask}
               onChangeText={text => setNewTask(text)}
+              style={styles.input}
+              theme={{
+                colors: {
+                  placeholder: '#3F60D3',
+                  text: '#000000',
+                  primary: '#3F60D3',
+                  underlineColor: 'transparent',
+                },
+              }}
             />
             <TouchableOpacity onPress={showDatePickerModal}>
               <View pointerEvents="none">
                 <PaperTextInput
                   label="Deadline Date"
                   value={deadline.toLocaleDateString()}
+                  style={styles.input}
                 />
               </View>
             </TouchableOpacity>
@@ -273,6 +353,7 @@ const MainScreen = ({ navigation }) => {
                 <PaperTextInput
                   label="Deadline Time"
                   value={deadline.toLocaleTimeString()}
+                  style={styles.input}
                 />
               </View>
             </TouchableOpacity>
@@ -286,10 +367,24 @@ const MainScreen = ({ navigation }) => {
             )}
           </Dialog.Content>
           <Dialog.Actions>
-            <PaperButton onPress={resetTaskForm}>
+            <PaperButton
+              onPress={resetTaskForm}
+              theme={{
+                colors: {
+                  primary: '#3F60D3',
+                },
+              }}
+            >
               Cancel
             </PaperButton>
-            <PaperButton onPress={currentTask ? confirmSaveTask : addTask}>
+            <PaperButton
+              onPress={currentTask ? confirmSaveTask : addTask}
+              theme={{
+                colors: {
+                  primary: '#3F60D3',
+                },
+              }}
+            >
               {currentTask ? "Save" : "Add"}
             </PaperButton>
           </Dialog.Actions>
@@ -300,8 +395,9 @@ const MainScreen = ({ navigation }) => {
         <Dialog
           visible={confirmDialogVisible}
           onDismiss={() => setConfirmDialogVisible(false)}
+          style={styles.dialog}
         >
-          <Dialog.Title>
+          <Dialog.Title style={styles.dialogTitle}>
             {dialogType === 'remove' ? 'Delete Task' : 'Save Change'}
           </Dialog.Title>
           <Dialog.Content>
@@ -310,7 +406,14 @@ const MainScreen = ({ navigation }) => {
             </Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <PaperButton onPress={() => setConfirmDialogVisible(false)}>
+            <PaperButton
+              onPress={() => setConfirmDialogVisible(false)}
+              theme={{
+                colors: {
+                  primary: '#3F60D3',
+                },
+              }}
+            >
               Cancel
             </PaperButton>
             <PaperButton
@@ -319,6 +422,11 @@ const MainScreen = ({ navigation }) => {
                   ? removeTask
                   : saveTask
               }
+              theme={{
+                colors: {
+                  primary: '#3F60D3',
+                },
+              }}
             >
               {dialogType === 'remove' ? 'Delete' : 'Change'}
             </PaperButton>
@@ -335,6 +443,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  dialog: {
+    backgroundColor: '#fff',
+  },
+  dialogTitle: {
+    color: '#3F60D3',
+    fontWeight: 'bold',
+  },
+  dialogContent: {
+    backgroundColor: '#fff',
+  },
+  input: {
+    backgroundColor: '#FFFFFF',
+    marginBottom: 16,
+  },
+  buttonInput: {
+    color: '#3F60D3',
   },
   tasksContainer: {
     flex: 1,
@@ -360,16 +485,17 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 25,
     fontWeight: 'bold',
-    marginLeft: 16,
+    marginLeft: 25,
     color: '#B2B2B2',
     backgroundColor: '#fff',
   },
   emptyMessage: {
     fontSize: 16,
     color: '#888',
-    marginLeft: 16,
+    marginLeft: 25,
     marginTop: 8,
-    opacity: 0.7,
+    marginBottom: 20,
+    opacity: 0.4,
   },
   completedTask: {
     textDecorationLine: 'line-through',
@@ -394,8 +520,8 @@ const styles = StyleSheet.create({
   barContainer: {
     backgroundColor: '#3F60D3',
     height: 225,
-    marginLeft: 16,
-    marginRight: 16,
+    marginLeft: 10,
+    marginRight: 10,
     marginBottom: 16,
     marginTop: 16,
     borderRadius: 25,
