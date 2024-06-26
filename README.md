@@ -38,7 +38,6 @@ Listosaurus adalah aplikasi manajemen tugas yang memungkinkan pengguna untuk men
     ```bash
     npx expo start
     ```
-
 ## Unduh Aplikasi
 
 Anda dapat mengunduh aplikasi Listosaurus dari tautan berikut:
@@ -80,6 +79,252 @@ Anda dapat mengunduh aplikasi Listosaurus dari tautan berikut:
 - **Melihat Daftar Pengguna**: Admin dapat melihat daftar semua pengguna yang terdaftar.
 - **Menghapus Pengguna**: Admin dapat menghapus pengguna dari daftar, termasuk menghapus semua data tugas pengguna tersebut.
 
+## Implementasi
+
+### Tampilan Antarmuka Aplikasi
+
+#### Halaman Login
+- **Deskripsi**: Halaman ini memungkinkan pengguna untuk login atau beralih ke mode pendaftaran.
+- **Komponen Penting**: Formulir login dengan input username dan password, tombol login, link untuk beralih ke halaman pendaftaran.
+
+#### Halaman Register
+- **Deskripsi**: Halaman ini memungkinkan pengguna untuk membuat akun baru.
+- **Komponen Penting**: Formulir pendaftaran dengan input username, password, konfirmasi password, tombol daftar.
+
+#### Halaman Utama
+- **Deskripsi**: Halaman utama setelah login, menampilkan daftar tugas pengguna.
+- **Komponen Penting**: Daftar tugas, tombol untuk menambah tugas baru, progress bar, tombol logout.
+
+#### Halaman Tambah/Edit Tugas
+- **Deskripsi**: Halaman ini digunakan untuk menambah atau mengedit tugas.
+- **Komponen Penting**: Formulir tugas dengan input teks tugas dan tenggat waktu, tombol simpan.
+
+#### Halaman Daftar Pengguna (Admin)
+- **Deskripsi**: Halaman ini memungkinkan admin untuk melihat dan mengelola daftar pengguna.
+- **Komponen Penting**: Daftar pengguna, tombol hapus untuk setiap pengguna.
+
+### Kode Aplikasi
+
+#### Kode Program dan Penjelasannya
+
+1. **Login dan Register**:
+   - **Algoritma Login**: Memeriksa apakah username dan password yang dimasukkan pengguna sesuai dengan yang tersimpan di AsyncStorage.
+     ```javascript
+     const handleLogin = async () => {
+       const trimmedUsername = username.trimEnd();
+       const storedUsers = await AsyncStorage.getItem('users');
+       const users = storedUsers ? JSON.parse(storedUsers) : {};
+
+       if (users[trimmedUsername] && users[trimmedUsername] === password) {
+         const role = (trimmedUsername === 'admin' && password === '123') ? 'admin' : 'user';
+         await AsyncStorage.setItem('loggedInUser', JSON.stringify({ username: trimmedUsername, role }));
+         navigation.replace('Main');
+       } else {
+         setError('Invalid username or password');
+       }
+     };
+     ```
+
+   - **Algoritma Register**: Memvalidasi input pengguna, memastikan username unik, dan menyimpan data pengguna baru ke AsyncStorage.
+     ```javascript
+     const handleRegister = async () => {
+       if (/\s/.test(username)) {
+         setError('Username must not contain spaces. Use ".", "_" or "-" instead.');
+         return;
+       }
+
+       if (password !== confirmPassword) {
+         setError('Passwords do not match');
+         return;
+       }
+
+       const storedUsers = await AsyncStorage.getItem('users');
+       const users = storedUsers ? JSON.parse(storedUsers) : {};
+
+       if (!users[username]) {
+         users[username] = password;
+         await AsyncStorage.setItem('users', JSON.stringify(users));
+         await AsyncStorage.setItem('loggedInUser', JSON.stringify({ username, role: 'user' }));
+         navigation.replace('Main');
+       } else {
+         setError('Username already exists');
+       }
+     };
+     ```
+
+2. **Manajemen Tugas**:
+   - **Algoritma Tambah Tugas**: Mengambil input dari pengguna, membuat objek tugas baru, dan menyimpannya ke AsyncStorage.
+     ```javascript
+     const addTask = () => {
+       if (newTask.trim()) {
+         const updatedTasks = [...tasks, { key: Date.now().toString(), text: newTask, deadline, completed: false }];
+         setTasks(updatedTasks);
+         saveTasks(updatedTasks);
+         resetTaskForm();
+       }
+     };
+     ```
+
+   - **Algoritma Edit Tugas**: Memperbarui objek tugas yang ada berdasarkan input pengguna dan menyimpannya kembali ke AsyncStorage.
+     ```javascript
+     const saveTask = () => {
+       if (newTask.trim() && currentTask) {
+         const updatedTasks = tasks.map(task =>
+           task.key === currentTask.key ? { ...task, text: newTask, deadline } : task
+         );
+         setTasks(updatedTasks);
+         saveTasks(updatedTasks);
+         resetTaskForm();
+         setConfirmDialogVisible(false);
+       }
+     };
+     ```
+
+   - **Algoritma Hapus Tugas**: Menghapus objek tugas dari AsyncStorage.
+     ```javascript
+     const removeTask = async () => {
+       if (selectedTask) {
+         const taskKey = selectedTask.key;
+         const updatedTasks = tasks.filter(task => task.key !== taskKey);
+         setTasks(updatedTasks);
+         await saveTasks(updatedTasks);
+         setSelectedTask(null);
+         setConfirmDialogVisible(false);
+       }
+     };
+     ```
+
+   - **Algoritma Tandai Tugas Selesai**: Mengubah status tugas menjadi selesai atau belum selesai dan menyimpannya ke AsyncStorage.
+     ```javascript
+     const toggleTask = (taskKey) => {
+       const updatedTasks = tasks.map(task =>
+         task.key === taskKey ? { ...task, completed: !task.completed } : task
+       );
+       setTasks(updatedTasks);
+       saveTasks(updatedTasks);
+     };
+     ```
+
+3. **Notifikasi**:
+   - **Algoritma Penjadwalan Notifikasi**: Menjadwalkan notifikasi jika tenggat waktu tugas kurang dari 30 menit.
+     ```javascript
+     const scheduleNotification = async (task) => {
+       const timeDiff = new Date(task.deadline).getTime() - new Date().getTime();
+       if (timeDiff > 0 && timeDiff <= 30 * 60 * 1000) {
+         await Notifications.scheduleNotificationAsync({
+           content: {
+             title: "Task Deadline Approaching",
+             body: `Your task "${task.text}" is due soon!`,
+           },
+           trigger: { seconds: Math.floor(timeDiff / 1000) },
+         });
+       }
+     };
+     ```
+
+   - **Algoritma Registrasi Notifikasi**: Meminta izin untuk mengirim notifikasi dan mendapatkan token notifikasi.
+     ```javascript
+     const registerForPushNotificationsAsync = async () => {
+       const { status } = await Notifications.requestPermissionsAsync();
+       if (status !== 'granted') {
+         alert('Failed to get push token for push notification!');
+         return;
+       }
+       const token = (await Notifications.getExpoPushTokenAsync()).data;
+       console.log(token);
+     };
+     ```
+
+4. **Progress Bar**:
+   - **Algoritma Menghitung Progres**: Menghitung persentase tugas yang telah diselesaikan dari total tugas.
+     ```javascript
+     const calculateProgress = () => {
+       const completedTasks = tasks.filter(task => task.completed).length;
+       const totalTasks = tasks.length;
+       const progress = totalTasks > 0 ? completedTasks / totalTasks : 0;
+       setProgress(progress);
+     };
+     ```
+
+5. **Pengelolaan Daftar Pengguna (Admin)**:
+   - **Algoritma Melihat Daftar Pengguna**: Menampilkan daftar semua pengguna yang terdaftar di sistem.
+     ```javascript
+     const loadUsers = async () => {
+       const storedUsers = await AsyncStorage.getItem('users');
+       const users = storedUsers ? JSON.parse(storedUsers) : {};
+       setUsers(Object.keys(users).map(username => ({ username, password: users[username] })));
+     };
+     ```
+
+   - **Algoritma Menghapus Pengguna**: Menghapus pengguna dari daftar dan semua data tugas terkait.
+     ```javascript
+     const removeUser = async (username) => {
+       const storedUsers = await AsyncStorage.getItem('users');
+       const users = storedUsers ? JSON.parse(storedUsers) : {};
+       delete users[username];
+       await AsyncStorage.setItem('users', JSON.stringify(users));
+
+       // Hapus data todolist pengguna
+       await AsyncStorage.removeItem(`tasks_${username}`);
+       
+       loadUsers();
+     };
+     ```
+
+## Blackbox Testing
+
+### Skenario Blackbox Testing
+
+1. **Login dengan kredensial yang valid**
+   - **Input**: `username: "user1"`, `password: "password1"`
+   - **Hasil yang Diharapkan**: Pengguna berhasil login dan diarahkan ke halaman utama.
+
+2. **Login dengan kredensial yang tidak valid**
+   - **Input**: `username: "user1"`, `password: "wrongpassword"`
+   - **Hasil yang Diharapkan**: Pengguna menerima pesan kesalahan "Invalid username or password".
+
+3. **Mendaftar dengan username baru**
+   - **Input**: `username: "newuser"`, `password: "password1"`, `confirmPassword: "password1"`
+   - **Hasil yang Diharapkan**: Pengguna berhasil mendaftar dan diarahkan ke halaman utama.
+
+4. **Mendaftar dengan username yang sudah ada**
+   - **Input**: `username: "user1"`, `password: "password1"`, `confirmPassword: "password1"`
+   - **Hasil yang Diharapkan**: Pengguna menerima pesan kesalahan "Username already exists".
+
+5. **Menambah tugas baru**
+   - **Input**: `task: "Tugas Baru"`, `deadline: "2023-12-31 23:59"`
+   - **Hasil yang Diharapkan**: Tugas baru ditambahkan ke daftar tugas.
+
+6. **Mengedit tugas yang sudah ada**
+   - **Input**: `task: "Tugas Baru - Diedit"`, `deadline: "2024-01-01 23:59"`
+   - **Hasil yang Diharapkan**: Tugas yang sudah ada diperbarui.
+
+7. **Menghapus tugas**
+   - **Input**: Pilih tugas dengan `task_id: "12345"`
+   - **Hasil yang Diharapkan**: Tugas dihapus dari daftar tugas.
+
+8. **Menandai tugas sebagai selesai**
+   - **Input**: Pilih tugas dengan `task_id: "12345"`
+   - **Hasil yang Diharapkan**: Tugas ditandai sebagai selesai dan progres diperbarui.
+
+9. **Menerima notifikasi**
+   - **Input**: Tugas dengan tenggat waktu `30 menit`
+   - **Hasil yang Diharapkan**: Pengguna menerima notifikasi bahwa tenggat waktu tugas mendekati.
+
+### Blackbox Testing
+
+| No  | Use Case                 | Input                                               | Hasil yang Diharapkan                               | Status |
+|-----|--------------------------|-----------------------------------------------------|----------------------------------------------------|--------|
+| 1   | Login                    | username: "user1", password: "password1"             | Pengguna berhasil login dan diarahkan ke halaman utama | ✅      |
+| 2   | Login                    | username: "user1", password: "wrongpassword"         | Pengguna menerima pesan kesalahan                  | ✅      |
+| 3   | Register                 | username: "newuser", password: "password1", confirmPassword: "password1" | Pengguna berhasil mendaftar dan diarahkan ke halaman utama | ✅      |
+| 4   | Register                 | username: "user1", password: "password1", confirmPassword: "password1" | Pengguna menerima pesan kesalahan                  | ✅      |
+| 5   | Menambah tugas baru      | task: "Tugas Baru", deadline: "2023-12-31 23:59"     | Tugas baru ditambahkan ke daftar tugas             | ✅      |
+| 6   | Mengedit tugas           | task: "Tugas Baru - Diedit", deadline: "2024-01-01 23:59" | Tugas yang sudah ada diperbarui                    | ✅      |
+| 7   | Menghapus tugas          | task_id: "12345"                                    | Tugas dihapus dari daftar tugas                    | ✅      |
+| 8   | Menandai tugas selesai   | task_id: "12345"                                    | Tugas ditandai sebagai selesai dan progres diperbarui | ✅      |
+| 9   | Menerima notifikasi      | Tugas dengan tenggat waktu 30 menit                 | Pengguna menerima notifikasi bahwa tenggat waktu tugas mendekati | ✅      |
+
 ## Kontribusi
 
 Kami sangat menghargai kontribusi dari komunitas open source. Jika Anda ingin berkontribusi, berikut adalah langkah-langkah yang dapat Anda ikuti:
@@ -111,23 +356,6 @@ Kami sangat menghargai kontribusi dari komunitas open source. Jika Anda ingin be
 - **Deskripsi Jelas**: Pastikan commit dan pull request memiliki deskripsi yang jelas tentang apa yang diubah atau ditambahkan.
 - **Ikuti Standar Kode**: Pastikan kode Anda mengikuti standar yang digunakan dalam proyek ini.
 - **Pengujian**: Uji perubahan Anda sebelum mengirim pull request.
-
-### Contoh Komit
-
-1. **Menambahkan Fitur Notifikasi**
-    ```bash
-    git commit -m "Menambahkan fitur notifikasi untuk tenggat waktu tugas"
-    ```
-
-2. **Memperbaiki Bug pada Fitur Login**
-    ```bash
-    git commit -m "Memperbaiki bug yang menyebabkan login gagal dengan username ber-spasi"
-    ```
-
-3. **Memperbarui Dokumentasi**
-    ```bash
-    git commit -m "Memperbarui README.md dengan petunjuk instalasi dan penggunaan"
-    ```
 
 ### Melaporkan Masalah
 
