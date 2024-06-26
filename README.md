@@ -39,6 +39,12 @@ Listosaurus adalah aplikasi manajemen tugas yang memungkinkan pengguna untuk men
     npx expo start
     ```
 
+## Unduh Aplikasi
+
+Anda dapat mengunduh aplikasi Listosaurus dari tautan berikut:
+
+[Unduh Listosaurus APK](https://github.com/username/repo-name/raw/main/assets/listosaurus.apk)
+
 ### Penggunaan
 
 1. **Login dan Register**: Pengguna dapat membuat akun baru atau login dengan akun yang sudah ada. Admin dapat login dengan username `admin` dan password `123`.
