@@ -43,7 +43,7 @@ Listosaurus adalah aplikasi manajemen tugas yang memungkinkan pengguna untuk men
 
 Anda dapat mengunduh aplikasi Listosaurus dari tautan berikut:
 
-[Unduh Listosaurus APK](https://github.com/jnzega/listosaurus-app/blob/master/assets/listosaurus.apk)
+[Unduh Listosaurus APK](https://github.com/jnzega/listosaurus-app/raw/master/assets/listosaurus.apk)
 
 ### Penggunaan
 
