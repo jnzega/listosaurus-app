@@ -106,10 +106,6 @@ Kami sangat menghargai kontribusi dari komunitas open source. Jika Anda ingin be
 - **Ikuti Standar Kode**: Pastikan kode Anda mengikuti standar yang digunakan dalam proyek ini.
 - **Pengujian**: Uji perubahan Anda sebelum mengirim pull request.
 
-## Lisensi
-
-Aplikasi ini dilisensikan di bawah [MIT License](LICENSE).
-
 ### Contoh Komit
 
 1. **Menambahkan Fitur Notifikasi**
