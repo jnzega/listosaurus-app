@@ -81,7 +81,7 @@ Kami sangat menghargai kontribusi dari komunitas open source. Jika Anda ingin be
 1. **Fork Repository**: Fork repository ini ke akun GitHub Anda.
 2. **Clone Repository**: Clone repository hasil fork ke komputer Anda.
     ```bash
-    git clone https://github.com/username/listosaurus-app.git
+    git clone https://github.com/jnzega/listosaurus-app.git
     ```
 3. **Buat Branch Baru**: Buat branch baru untuk fitur atau perbaikan yang ingin Anda lakukan.
     ```bash
