@@ -27,7 +27,7 @@ Listosaurus adalah aplikasi manajemen tugas yang memungkinkan pengguna untuk men
 
 1. **Clone Repository**: Clone repository dari GitHub.
     ```bash
-    git clone https://github.com/username/listosaurus-app.git
+    git clone https://github.com/jnzega/listosaurus-app.git
     ```
 2. **Install Dependencies**: Jalankan perintah berikut untuk menginstall semua dependensi yang dibutuhkan.
     ```bash
@@ -109,3 +109,28 @@ Kami sangat menghargai kontribusi dari komunitas open source. Jika Anda ingin be
 ## Lisensi
 
 Aplikasi ini dilisensikan di bawah [MIT License](LICENSE).
+
+### Contoh Komit
+
+1. **Menambahkan Fitur Notifikasi**
+    ```bash
+    git commit -m "Menambahkan fitur notifikasi untuk tenggat waktu tugas"
+    ```
+
+2. **Memperbaiki Bug pada Fitur Login**
+    ```bash
+    git commit -m "Memperbaiki bug yang menyebabkan login gagal dengan username ber-spasi"
+    ```
+
+3. **Memperbarui Dokumentasi**
+    ```bash
+    git commit -m "Memperbarui README.md dengan petunjuk instalasi dan penggunaan"
+    ```
+
+### Melaporkan Masalah
+
+Jika Anda menemukan masalah atau bug dalam aplikasi ini, silakan buka [Issue Baru](https://github.com/jnzega/listosaurus-app/issues) di GitHub dan jelaskan masalah yang Anda temukan.
+
+---
+
+Terima kasih telah menggunakan dan berkontribusi pada Listosaurus! Mari bersama-sama membuat aplikasi ini lebih baik.
